@@ -1,0 +1,20 @@
+<assembly>
+    <id>dist</id>
+    <baseDirectory>Cycle-Detection-Multithread-${pom.version}</baseDirectory>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <files>
+        <file>
+          <source>${basedir}/src/main/resources/log4j.xml</source>
+          <outputDirectory>/</outputDirectory>
+        </file>
+    </files>
+    <binaries>
+        <dependencySets>
+            <dependencySet>
+                <outputDirectory>/lib</outputDirectory>
+            </dependencySet>
+        </dependencySets>
+    </binaries>
+</assembly>
