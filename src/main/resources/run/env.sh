@@ -1,0 +1,5 @@
+APP_HOME="`dirname $0`/../"
+CONF_DIR="$APP_HOME/conf/"
+LIB_DIR="$APP_HOME/lib/"
+CP="$CONF_DIR:$LIB_DIR/*"
+MAIN_CLASS="org.cycdet.App"

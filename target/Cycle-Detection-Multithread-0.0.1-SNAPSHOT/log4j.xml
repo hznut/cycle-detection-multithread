@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <!-- Some helpful layouts -->
+    <!-- LAYOUT-NORMAL "%d{ABSOLUTE} %-5p [%c{1}] %m%n" -->
+    <!-- LAYOUT-THREAD "%d{ABSOLUTE} {%15.15t} %-5p [%c{1}] %m%n" -->
+
+    <!-- Setup all appenders -->
+    <!-- CONSOLE: Logs to System.err -->
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p {%15.15t} [%c{1}] %m%n" />
+        </layout>
+    </appender>
+    
+     <!-- FILE: Logs to a file, implements rolling logs -->
+    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="cycledet.log"/>
+        <param name="MaxFileSize" value="25MB"/>
+        <param name="MaxBackupIndex" value="5"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p {%15.15t} [%c{1}] %m%n" />
+        </layout>
+    </appender>
+    
+
+    <logger name="org.cycdet">
+        <level value="DEBUG" />
+    </logger>
+    
+    <root>
+        <level value="DEBUG" />      
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    
+</log4j:configuration>
