@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -21,28 +22,34 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.cycdet.parser.PruneSubGraphTask;
-import org.cycdet.parser.TextToSubGraphTask;
+import org.cycdet.parser.FileBlockReader;
+import org.cycdet.task.PruneSubGraphTask;
+import org.cycdet.task.TextToSubGraphTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Hello world!
- *
+ * Cycle Detection in undirected graph.
+ * 
  */
 public class App {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws IOException,
             InterruptedException, ClassNotFoundException {
-        final String inputFileName = "/Users/hvijay/work/eclipse-workspace/cycle-detection-multithread/data/test_cycle_4.dat";
-        final String outputDirName = "/Users/hvijay/work/eclipse-workspace/cycle-detection-multithread/data/";
-        int linesPerRead = 4;
-        long totalLines = getTotalLines(inputFileName);
-        int numTasks = (int) Math.ceil((double)totalLines / linesPerRead);
-        final int MIN_NUM_THREADS = 5;
+        final String inputFileName = args[0];
+        final String outputDirName = args[1];
+
+        // Ideally set from property
+        int desiredNumTasks = Integer.parseInt(args[2]);
+        long totalNodes = getTotalLines(inputFileName);
+        List<FileBlockReader> lstFileBlockReaders = FileBlockReader
+                .generateBlockReaders(inputFileName, desiredNumTasks);
+        int numTasks = lstFileBlockReaders.size();
+        // Ideally set from property
+        final int MIN_NUM_THREADS = (numTasks < 5) ? numTasks : 5;
         /*
-         * corePoolSize = numTasks. Irrespective of number of nodes pruned (i.e.
+         * corePoolSize = MIN_NUM_THREADS. Irrespective of number of nodes pruned (i.e.
          * even if only one node is pruned) we have to re-process all subgraphs.
          * maximumPoolSize = numTasks. Max new read tasks can only be these many.
          * keepAliveTime = 60 secs.
@@ -56,9 +63,9 @@ public class App {
                 new HashSet<Integer>());
         Collection<TextToSubGraphTask> textToSubGraphTasks = new ArrayList<TextToSubGraphTask>(
                 numTasks);
-        for(int i = 0; i<numTasks; i++) {
-            textToSubGraphTasks.add(new TextToSubGraphTask(inputFileName, 
-                    i * linesPerRead, linesPerRead, outputDirName + "map" + i,
+        for(FileBlockReader fileBlockReader : lstFileBlockReaders) {
+            textToSubGraphTasks.add(new TextToSubGraphTask(fileBlockReader,
+                    outputDirName + "map" + fileBlockReader.getBlockId(),
                     prunedNodes));
         }
         logger.debug("TextToSubGraphTask created.");
@@ -88,9 +95,9 @@ public class App {
             } while (prunedNodes.size() > lastPrunedNodesCount);
         }
 
-        if (prunedNodes.size() == totalLines) {// All nodes pruned => No Cycle
+        if (prunedNodes.size() == totalNodes) {// All nodes pruned => No Cycle
             logger.info("NO CYCLES detected.");
-        } else {// Cycle and knots founds
+        } else {
             // Print remaining graph that has cycles and knots.
             // Write hashmaps as text
             String inFileName;

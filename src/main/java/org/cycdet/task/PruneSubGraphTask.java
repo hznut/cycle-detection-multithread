@@ -1,4 +1,4 @@
-package org.cycdet.parser;
+package org.cycdet.task;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,7 +16,10 @@ import org.slf4j.LoggerFactory;
 
 public class PruneSubGraphTask implements Callable<Boolean> {
     private final String outputFileName;
+
+    // Threadsafe shared datastructure
     private final Set<Integer> prunedNodes;
+
     private Map<Integer, LinkedList<Integer>> map;
     private final String inputFileName;
     private static final Logger logger = LoggerFactory
@@ -30,12 +33,49 @@ public class PruneSubGraphTask implements Callable<Boolean> {
         this.inputFileName = fileName;
     }
 
+    /**
+     * This call method does following:
+     * <p>
+     * Reads map representing the subgraph from file. Prunes nodes (if any
+     * eligible) from subgraph. Writes the map representing the subgraph back to
+     * file.
+     * </p>
+     */
     public Boolean call() throws Exception {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
                 inputFileName));
         map = (Map<Integer, LinkedList<Integer>>) ois.readObject();
         ois.close();
         logger.debug("Map read from {}", inputFileName);
+
+        // Prune the subgraph
+        map = pruneSubgraph(map);
+
+        // Write map
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
+                outputFileName, false));// Overwrite
+        oos.writeObject(map);
+        oos.close();
+        logger.debug("Map written to {}", outputFileName);
+        return true;
+    }
+
+    /**
+     * Pruning logic:
+     * <p>
+     * For each key(node) go through list of neighbor ids. Any neighbor node
+     * that is detected as a pruned node is removed from list.
+     * </p>
+     * <p>
+     * Any node that has one or less neighbors is pruned i.e. that key and it's
+     * value are removed from the map.
+     * </p>
+     * 
+     * @param map
+     * @return
+     */
+    private Map<Integer, LinkedList<Integer>> pruneSubgraph(
+            Map<Integer, LinkedList<Integer>> map) {
         for (Integer node : map.keySet()) {
             LinkedList<Integer> neighbors = map.get(node);
             for (Integer neighbor : neighbors) {
@@ -50,14 +90,7 @@ public class PruneSubGraphTask implements Callable<Boolean> {
                 logger.debug("Node {} pruned", node);
             }
         }
-
-        // Write map
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-                outputFileName, false));// Overwrite
-        oos.writeObject(map);
-        oos.close();
-        logger.debug("Map written to {}", outputFileName);
-        return true;
+        return map;
     }
 
 }
