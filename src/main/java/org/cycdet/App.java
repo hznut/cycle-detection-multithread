@@ -61,6 +61,11 @@ public class App {
                 new LinkedBlockingQueue<Runnable>(2 * numTasks));
         Set<Integer> prunedNodes = Collections.synchronizedSet(
                 new HashSet<Integer>());
+
+        /*
+         * The following also demonstrates parallel reading of different file
+         * blocks.
+         */
         Collection<TextToSubGraphTask> textToSubGraphTasks = new ArrayList<TextToSubGraphTask>(
                 numTasks);
         for(FileBlockReader fileBlockReader : lstFileBlockReaders) {
