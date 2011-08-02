@@ -15,5 +15,5 @@ if [ "$1" == "-d" ]; then
   JAVA_ARGS="$JAVA_ARGS $DEBUGGING_OPTS"
 fi
 
-$JAVA_HOME/bin/java -cp "$CP" $JAVA_ARGS $MAIN_CLASS $@ > $APP_HOME/console.log 2>&1 &
-echo $! >event-listener.pid
+$JAVA_HOME/bin/java -cp "$CP" $JAVA_ARGS $MAIN_CLASS $@ > $APP_HOME/cycledet.log 2>&1 &
+echo $! >cycle-detection.pid
