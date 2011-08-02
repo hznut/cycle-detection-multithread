@@ -23,7 +23,7 @@ public class PruneSubGraphTask implements Callable<Boolean> {
     private Map<Integer, LinkedList<Integer>> map;
     private final String inputFileName;
     private static final Logger logger = LoggerFactory
-            .getLogger(TextToSubGraphTask.class);
+            .getLogger(PruneSubGraphTask.class);
 
     public PruneSubGraphTask(String fileName, String outputFileName,
             Set<Integer> prunedNodes) throws FileNotFoundException,
@@ -88,6 +88,8 @@ public class PruneSubGraphTask implements Callable<Boolean> {
                 prunedNodes.add(node);
                 map.remove(node);
                 logger.debug("Node {} pruned", node);
+            } else {
+                map.put(node, neighbors);
             }
         }
         return map;

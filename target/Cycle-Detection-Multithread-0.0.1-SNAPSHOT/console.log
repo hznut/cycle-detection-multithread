@@ -1,3 +1,7 @@
+0) 0-42
+1) 42-79
+2) 79-117
+3) 117-144
 2011-08-02 01:05:48,231 DEBUG {           main} [App] TextToSubGraphTask created.
 2011-08-02 01:05:48,234 DEBUG {pool-1-thread-1} [TextToSubGraphTask] Opened block 1
 2011-08-02 01:05:48,234 DEBUG {pool-1-thread-1} [TextToSubGraphTask] Pruned node 1

@@ -85,9 +85,9 @@ public class TextToSubGraphTask implements Callable<Boolean> {
         if (str != null) {
             str = str.trim();
             if (!str.trim().isEmpty()) {
-                for (String s : str.split("\n")) {// Read each line in block
+                for (String line : str.split("\n")) {// Read each line in block
                     LinkedList<Integer> neighbors = new LinkedList<Integer>();
-                    String[] arr = str.split("\t");
+                    String[] arr = line.split("\t");
                     int node = Integer.parseInt(arr[0]);
                     for (String num : arr[1].split(",")) {
                         int neighbor = Integer.parseInt(num);

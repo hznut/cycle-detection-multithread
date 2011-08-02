@@ -1,6 +1,7 @@
 package org.cycdet;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -86,7 +87,7 @@ public class App {
             do {
                 pruneSubGraphTasks.clear();
                 lastPrunedNodesCount = prunedNodes.size();
-                for (int i = 0; i < numTasks; i++) {
+                for (int i = 1; i <= numTasks; i++) {
                     fileName = outputDirName + "map" + i;
                     pruneSubGraphTasks.add(new PruneSubGraphTask(fileName,
                             fileName, prunedNodes));
@@ -107,14 +108,23 @@ public class App {
             // Write hashmaps as text
             String inFileName;
             String outFileName = outputDirName + "prunedgraph.dat";
+            new File(outFileName).delete();
             logger.info("One or more CYCLES detected. Check {}", outFileName);
-            for (int i = 0; i < numTasks; i++) {
+            for (int i = 1; i <= numTasks; i++) {
                 inFileName = outputDirName + "map" + i;
                 readMapWriteText(inFileName, outFileName);
             }
         }
     }
 
+    /**
+     * 
+     * @param inFileName
+     * @param outFileName
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private static void readMapWriteText(String inFileName,
             String outFileName) throws FileNotFoundException, IOException, 
             ClassNotFoundException {
@@ -132,6 +142,7 @@ public class App {
                 for (Integer neighbor : entry.getValue()) {
                     sb.append(neighbor).append(',');
                 }
+                sb.deleteCharAt(sb.length() - 1);
                 out.println(sb.toString());
             }
             out.flush();
@@ -141,6 +152,13 @@ public class App {
                 outFileName);
     }
 
+    /**
+     * Reads total lines in the text file.
+     * 
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
     private static long getTotalLines(String fileName) throws IOException {
         LineNumberReader reader = new LineNumberReader(new FileReader(fileName));
         reader.skip(Long.MAX_VALUE);

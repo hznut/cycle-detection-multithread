@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Archiver-Version: Plexus Archiver
-Created-By: 19.1-b02-334 (Apple Inc.)
-

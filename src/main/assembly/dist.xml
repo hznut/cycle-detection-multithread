@@ -2,14 +2,27 @@
     <id>dist</id>
     <baseDirectory>Cycle-Detection-Multithread-${pom.version}</baseDirectory>
     <formats>
-        <format>jar</format>
+        <format>tar.gz</format>
     </formats>
-    <files>
-        <file>
-          <source>${basedir}/src/main/resources/log4j.xml</source>
-          <outputDirectory>/</outputDirectory>
-        </file>
-    </files>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>755</fileMode>
+        </fileSet>
+    </fileSets>
+        
     <binaries>
         <dependencySets>
             <dependencySet>
